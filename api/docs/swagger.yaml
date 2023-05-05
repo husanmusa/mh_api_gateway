@@ -1,0 +1,743 @@
+definitions:
+  appointment_service.Appointment:
+    properties:
+      appoint_date:
+        type: string
+      appoint_id:
+        type: integer
+      appoint_time:
+        type: string
+      created_at:
+        type: string
+      doctor_id:
+        type: string
+      id:
+        type: string
+      patient_id:
+        type: string
+      status:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  appointment_service.AppointmentId:
+    properties:
+      id:
+        type: string
+    type: object
+  appointment_service.Doctor:
+    properties:
+      age:
+        type: integer
+      doctor_id:
+        type: string
+      gender:
+        type: integer
+      name:
+        type: string
+      polyclinic:
+        type: string
+      role:
+        type: string
+    type: object
+  appointment_service.DoctorId:
+    properties:
+      doctor_id:
+        type: string
+    type: object
+  appointment_service.GetListDoctorsRequest:
+    properties:
+      limit:
+        type: integer
+      offset:
+        type: integer
+    type: object
+  appointment_service.GetListPatientsRequest:
+    properties:
+      limit:
+        type: integer
+      offset:
+        type: integer
+    type: object
+  appointment_service.Patient:
+    properties:
+      access_token:
+        type: string
+      age:
+        type: integer
+      gender:
+        type: integer
+      login:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      patient_id:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  appointment_service.PatientId:
+    properties:
+      patient_id:
+        type: string
+    type: object
+  config.Config:
+    properties:
+      appointmentGRPCPort:
+        type: string
+      appointmentServiceHost:
+        type: string
+      defaultLimit:
+        type: string
+      defaultOffset:
+        type: string
+      environment:
+        description: debug, test, release
+        type: string
+      httpport:
+        type: string
+      httpscheme:
+        type: string
+      secretKey:
+        type: string
+      serviceName:
+        type: string
+      version:
+        type: string
+    type: object
+  http.Response:
+    properties:
+      data: {}
+      description:
+        type: string
+      error: {}
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a api gateway
+  termsOfService: https://udevs.io
+paths:
+  /api/appointment/:
+    post:
+      consumes:
+      - application/json
+      description: This API for creating a new appointment
+      parameters:
+      - description: AppointmentCreateRequest
+        in: body
+        name: appointment
+        required: true
+        schema:
+          $ref: '#/definitions/appointment_service.Appointment'
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new appointment
+      tags:
+      - Appointment
+  /api/appointment/{appointment_id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: delete_appointment
+      parameters:
+      - description: appointment_id
+        in: path
+        name: appointment_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Cancel
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete appointment by_id
+      tags:
+      - Appointment
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: appointment_id
+        in: path
+        name: appointment_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GetAppointment ResponseBody
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/appointment_service.AppointmentId'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get appointment by appointment_id
+      tags:
+      - Appointment
+  /api/config:
+    get:
+      consumes:
+      - application/json
+      description: show service config data when the service environment set to debug
+        mode
+      operationId: get_config
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Response data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/config.Config'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: get config data on the debug mode
+  /api/doctor:
+    get:
+      consumes:
+      - application/json
+      operationId: get_doctor_list
+      parameters:
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GetDoctorListResponseBody
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/appointment_service.GetListDoctorsRequest'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get all doctors
+      tags:
+      - Doctor
+  /api/doctor/:
+    post:
+      consumes:
+      - application/json
+      description: This API for creating a new doctor
+      parameters:
+      - description: DoctorCreateRequest
+        in: body
+        name: doctor
+        required: true
+        schema:
+          $ref: '#/definitions/appointment_service.Doctor'
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new doctor
+      tags:
+      - Doctor
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Doctor data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update doctor
+      tags:
+      - Doctor
+  /api/doctor/{doctor_id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: delete_doctor
+      parameters:
+      - description: doctor_id
+        in: path
+        name: doctor_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: deleted
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete doctor by_id
+      tags:
+      - Doctor
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: 7d4a4c38-dd84-4902-b744-0488b80a4c01
+        description: uuid
+        in: header
+        name: platform-id
+        required: true
+        type: string
+      - description: doctor_id
+        in: path
+        name: doctor_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GetCountryResponseBody
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/appointment_service.DoctorId'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get doctor by doctor_id
+      tags:
+      - Doctor
+  /api/patient:
+    get:
+      consumes:
+      - application/json
+      operationId: get_patient_list
+      parameters:
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GetPatientListResponseBody
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/appointment_service.GetListPatientsRequest'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get all patients
+      tags:
+      - Patient
+  /api/patient/:
+    post:
+      consumes:
+      - application/json
+      description: This API for creating a new patient
+      parameters:
+      - description: PatientCreateRequest
+        in: body
+        name: patient
+        required: true
+        schema:
+          $ref: '#/definitions/appointment_service.Patient'
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new patient
+      tags:
+      - Patient
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Patient data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update patient
+      tags:
+      - Patient
+  /api/patient/{patient_id}:
+    delete:
+      consumes:
+      - application/json
+      operationId: delete_patient
+      parameters:
+      - description: patient_id
+        in: path
+        name: patient_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: deleted
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete patient by_id
+      tags:
+      - Patient
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: 7d4a4c38-dd84-4902-b744-0488b80a4c01
+        description: uuid
+        in: header
+        name: platform-id
+        required: true
+        type: string
+      - description: patient_id
+        in: path
+        name: patient_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GetCountryResponseBody
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/appointment_service.PatientId'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get patient by patient_id
+      tags:
+      - Patient
+  /api/ping:
+    get:
+      consumes:
+      - application/json
+      description: this returns "pong" messsage to show service is working
+      operationId: ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Response data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: returns "pong" message
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
